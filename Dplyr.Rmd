@@ -1,0 +1,1160 @@
+---
+title: "Manipulação de Dados:"
+subtitle: "Conhecendo o pacote Dplyr"
+author: "Julia Hellen Ferreira"
+institute: "Academica em Estatística"
+date: "31 de outubro de 2020"
+output:
+  xaringan::moon_reader:
+    css: [fc, chocolate-fonts, custom.css] #fc, shinobi, tamu
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+class: middle
+
+# R Ladies 
+  
+R-Ladies Niterói é uma organização mundial cuja missão é promover a diversidade de gênero na comunidade da linguagem R.
+
+# Código de Conduta
+  
+"O R Ladies dedica-se a proporcionar uma experiência livre de assédio para todas as pessoas participantes, desta forma, não é tolerada nenhuma forma de assédio."
+
+"Se você for assediado por um membro / convidado / participante de / em algum evento R-Ladies, ou ainda observe que alguém esteja sob assédio ou tem outras dúvidas, entre em contato com os Membros Fundadores através de reporting [at] rladies [dot] org. As incidências locais serão tratadas juntamente com os organizadores locais. Se a pessoa que está assediando você estiver na equipe, ela não participará da resolução do seu incidente. Responderemos o mais rápido possível."
+
+[Código de Conduta - R Ladies ](https://github.com/rladies/starter-kit/wiki/Code-of-Conduct#portuguese)
+
+
+---
+
+class: middle
+
+### Profissional:
+
+- Academica em Estatística na Universidade Federal Fluminense (UFF);
+
+- [Estagiária em Tecnologia da Informação pelo Instituto de Tecnologia e Sociedade do Rio (ITS)](https://itsrio.org/pt/institucional/);
+
+- Assitente de pesquisa da Universidade de Stanford;
+
+- Co-organizadora: [R-Ladies Niterói](https://www.meetup.com/pt-BR/rladies-niteroi/),  [LatinR](https://latin-r.com/pt)
+
+- Bolsita do Projeto: [GET UFF contra o covid-19](https://covid19.getuff.com.br/)
+
+### Contato:
+
+- [GitHub](https://github.com/JuliaHellenFerreira)
+
+- [LinkedIn](https://www.linkedin.com/in/julia-hellen-ferreira-6a23b6140/)
+
+```{r message=FALSE, warning=FALSE, , out.width="25%", paged.print=FALSE, echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("julia.jpeg")
+```
+
+---
+
+class: middle
+
+### Julia Hellen Skywalker:
+
+- Leitora assídua. Atualmente estou lendo "Guerra dos Tronos- Vol.01";
+
+- Ouço muitos podcats; 
+
+- Gosto muito de ver filmes (antigos principalmente);
+
+- Fã de Star Wars;   ~Proibido falar mal do epsódio IX~
+
+- Tenho dois doguinhos lindos;
+
+- Beyoncé é minha inspiração diária.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/11wsZr0jbXc15m/giphy.gif")
+```
+---
+class: inverse, center, middle
+
+# E vocês?
+
+---
+class: middle
+
+# Como será o capítulo?
+
+Como este é o nosso primeiro capítulo online, vamos testar algumas formas de ensino:
+  
+- Encontro expositivo;
+
+- Pedimos que desliguem os microfones;
+
+- Apostila com teoria e exercícios sobre o **Dplyr** para auxiliar o estudo do pacote;
+
+- Usaremos o banco de dados: Star Wars.
+
+- Caso, tenha algum problema tentaremos ajudar durante a seção de dúvidas. Se não der tempo, pedimos que nos envie o problema durante a semana que vamos ajudar a resolver.
+
+- A cada função teremos uma seção para: **definição**, **exemplo**, **dúvidas ** e **exercício**.
+
+---
+class: middle
+
+# Pacote Dplyr
+
+O Dplyr foi desenvolvido pelo Hadley Wickham. O pacote veio para facilitar o uso de funcionalidades já existentes no R. Sendo assim, fazer as análises de dados de *data frame* se tornou mais simples e muitas vezes com poucas linhas de comando.
+
+```{r}
+# install.packages("tidyverse") 
+# install.packages("dplyr")
+```
+
+
+# Funções que vamos aprender:
+
+**Parte I**
+
+- rename(); distinct(); select();  
+
+- filter(); mutate(); transmute();
+
+- arrange(); summarise(); group_by();
+
+**Parte II**
+
+- inner_join(), left_join();
+
+- full_join(), right_join().
+
+---
+class: inverse, center, middle
+
+# Parte I
+
+---
+class: middle
+
+# Banco de Dados
+
+Como uma boa fã de Star Wars, eu escolhi um banco de dados que reúne as seguintes informações do universo Star Wars: **name**, **height(cm)**, **mass(kg)**, **hair_color**, **skin_color**, **eye_color**, **birth_year**, **sex**, **gender**, **homeworld**, **species**, **films**, **vehicles** e **starshipd**.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/8hMD9YakVza3452SpN/giphy.gif")
+```
+
+---
+
+### Código:
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+starwars
+```
+
+---
+class: middle
+
+# Banco de Dados
+
+Para começar nossa análise iremos verificar a classe do nosso banco de dados. Para isso faremos o seguinte comando:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+class(starwars)
+```
+
+Podemos ver que o banco de dados é uma tibble. O que seria um *tibble*? Vamos usar a definição que o *Curso-R* deu para enteder melhor:
+  
+*"Uma tibble nada mais é do que um data.frame, mas com um método de impressão mais adequado."* [Curso-R](https://material.curso-r.com/manip/)
+
+Agora, sabemos que nosso banco de dados é uma tibble e podemos usar o pacote Dyplyr para realizar nossas análises.
+
+---
+class: inverse, center, middle
+
+# Operador *Pipe* %>% 
+
+---
+class: middle
+
+# Operador *Pipe* %>% 
+
+Para que nossas linhas de comando fiquem mais organizada e realizar várias funções de uma só vez podemos usar o operador *Pipe*. E para entender o operador *Pipe* vamos ver como fazemos sem ele:
+  
+### Código sem o operador:
+  
+Queremos visualizar as 10 primeiras observações do banco de dados:
+  
+```{r message=FALSE, warning=FALSE}
+head(starwars, 10)
+```
+
+---
+class: middle
+
+# Operador *Pipe* %>% 
+
+Agora, precisamos compreender como o operador facilita muito a análise. Antes era preciso colocar o nome da base de dados como argumento da função. 
+Com o operador isso não é mais preciso porque o operador irá "acrescentar" este argumento automaticamente. Porém o *Pipe* faz muito mais que isso e vamos ver nos próximos slides.
+
+- O atalho é **Ctrl + Shift + M**.
+
+### Código com o operador:
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  head(10)
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: inverse, center, middle
+
+# Função: rename()
+
+---
+class: middle
+
+# Função: rename()
+
+A primeira função que vamos estudar é o *rename()*. Esta função irá *renomear* as variáveis do banco de dados. Vejamos o exemplo a seguir:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars <- starwars %>% 
+  rename(Nome = name,
+         Altura_cm = height,
+         Peso_Kg = mass,
+         Cor_dos_cabelos = hair_color,
+         Cor_da_pele = skin_color,
+         Cor_dos_olhos = eye_color,
+         Idade = birth_year,
+         Sexo = sex,
+         Genero = gender,
+         Planeta_Natal = homeworld,
+         Especies = species,
+         Filmes = films,
+         Veiculos = vehicles,
+         Naves = starships)
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: rename()
+
+Renomeie as colunas: **Filmes** para **Episodios**.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/J1nr4o7oolWz6/giphy.gif")
+```
+---
+
+# Exercício: rename() - Resolução
+
+- Renomeie a coluna: **Filmes** para **Episodios**:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars <- starwars %>% 
+  rename(Episodios = Filmes)
+
+starwars
+```
+---
+class: inverse, center, middle
+
+# Função: distinct()
+
+---
+class: middle
+
+# Função: distinct()
+
+A função distinct() seleciona apenas as linhas únicas (distintas) de uma determinada variável do banco de dados.
+
+### Código - Planetas distitos na nossa base de dados
+  
+```{r message=FALSE, warning=FALSE}
+
+starwars %>% 
+  distinct(Planeta_Natal)
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: distinct()
+
+- Aplique a função distinct() na variável Especies.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/YfCuW2maPixri/giphy.gif")
+```
+---
+
+# Exercício: distinct() - Resolução
+
+- Aplique a função distinct() na variável **Especies**:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  distinct(Especies)
+
+```
+---
+class: inverse, center, middle
+
+# Função: select()
+
+---
+class: middle
+
+# Função: select()
+
+Agora veremos a função que vamos estudar é o *select()*. Esta função irá *selecionar* as colunas do banco de dados que você colocou como argumento. Vejamos o exemplo a seguir:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  select(Nome, Especies, Planeta_Natal)
+```
+
+---
+class: middle
+
+# Função: select()
+
+Na função *select()*, podemos usar outra função que é *everything()* que irá nos ajudar a organizar as colunas.
+
+### Código - Organizando as colunas
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  select(Nome, Especies, Genero, everything())
+```
+
+---
+class: middle
+
+# Função: select()
+
+A função *select()*, também possibilita a exclução de colunas de forma descomplicada. Basta usar o sinal de menos antes do nome da coluna que deseja retirar do seu banco de dados.
+
+### Código - Excluindo colunas
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  select(Nome, Especies, -Genero, everything())
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: select()
+
+Selecione as colunas: **Nome**, **Cor_dos_cabelos** e **Cor_dos_olhos**.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/hr3xWyedITH1kMkyxy/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: select() - Resolução
+
+- Selecione as colunas: **Nome**, **Cor_dos_cabelos** e **Cor_dos_olhos**:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  select(Nome, Cor_dos_cabelos, Cor_dos_olhos)
+```
+
+---
+class: inverse, center, middle
+
+# Função: filter()
+
+---
+class: middle
+
+# Função: filter()
+
+Sem dúvidas a função *filter()* é uma das mais importantes deste pacote. Usamos para filtrar as linhas de um banco de dados em relação a algum critério. Vamos ver os seguintes exemplos:
+  
+### Código:
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  filter(Peso_Kg > 50)
+```
+
+---
+class: middle
+
+# Função: filter()
+
+### Código:
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  filter(Peso_Kg < 50)
+
+```
+
+---
+class: middle
+
+# Função: filter()
+
+### Código:
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  filter(Peso_Kg >= 50 & Peso_Kg <= 100)
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: filter()
+
+- Filtre as linhas que a **Pesos_Kg** é maior ou igual 203.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/fMAIIcWq8jXWZ6N2CK/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: filter() - Resolução
+
+- Filtre as linhas que a **Pesos_Kg** é maior ou igual 203:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  filter(Peso_Kg >= 203)
+```
+
+---
+class: inverse, center, middle
+
+# Função: mutate()
+
+---
+class: middle
+
+# Função: mutate()
+
+A função *mutate()* irá adicionar uma nova coluna ou mais no final da sua base de dados. A função possibilita a realização de cáculos e os seus resultados irão ocupar as linhas de nova coluna.
+
+```{r message=FALSE, warning=FALSE}
+data <- starwars %>% 
+  mutate(Altura_m = Altura_cm / 100)
+data
+```
+
+---
+class: middle
+
+# Função: mutate()
+
+Agora, temos a coluna *Altura_m* com a média das alturas dos personagens. Podemos ver o resultado do mutante a seguir:
+  
+```{r message=FALSE, warning=FALSE}
+data$Altura_m %>% 
+  head(87)
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: mutate()
+
+- Crie uma coluna com o calculo de IMC:
+
+Fórmula: 
+  
+  IMC = Peso_Kg/(Altura_m**2)
+  
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/xTiIzOTILgoOMYwFBC/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: mutate() - Resolução
+
+- Crie uma coluna com o calculo de IMC.
+
+  
+### Código
+
+```{r message=FALSE, warning=FALSE}
+data %>% 
+  mutate(imc = Peso_Kg/(Altura_m**2)) %>% 
+  select(Nome, imc)
+```
+
+---
+class: inverse, center, middle
+
+# Função: transmute()
+
+---
+class: middle
+
+# Função: transmute()
+
+A função transmute() é bem semelhante a função mutate() a diferença é que o resultado será somente as colunas criadas a pártir da função. Ou seja, ela irá remover as demais colunas e irá manter as colunas criadas com a função.
+
+## Código
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  transmute(Altura_m = Altura_cm/100)
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: transmute()
+
+- Coloque a coluna **Pesos_Kg** em gramas.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/jd6TVgsph6w7e/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: transmute() - Resolução
+
+- Coloque a coluna **Pesos_Kg** em gramas.
+
+## Código:
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  transmute(Peso_g= Peso_Kg/1000)
+```
+
+---
+class: inverse, center, middle
+
+# Função: arrange()
+
+---
+class: middle
+
+# Função: arrange()
+
+A função arrange() irá reoordenar as linhas da base de dados conforme a variável escolhida. Podemos reoordenar de forma crescente e decrescente. Para fazer crescente basta usar a função *arrange()* e para fazer decrescente basta fazer *arrange(desc())*.
+
+## Código - Ordem crescente
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  arrange(Altura_cm)
+```
+
+---
+class: middle
+
+# Função: arrange()
+
+## Código - Ordem decrescente
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  arrange(desc(Altura_cm))
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: arrange()
+
+- Coloque a coluna **Peso_Kg** em ordem decrescente.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/jtXYGA1PygmwbUj0Mu/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: arrange() - Resolução
+
+- Coloque a coluna **Pesos_Kg** em ordem decrescente.
+
+## Código:
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  arrange(desc(Peso_Kg))
+```
+
+---
+class: inverse, center, middle
+
+# Função: summarise()
+
+---
+class: middle
+
+# Função: summarise()
+
+Esta função irá criar uma ou mais medidas de resumos da variável escolhida. Para entender melhor vamos fazer um exemplo:
+
+## Código
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  summarise(Altura_media = mean(Altura_cm, na.rm = T))
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: summarise()
+
+- Qual a média da variável *Pesos_Kg* ?
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/j5WbkoqXbhi5s3vlri/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: summarise() - Resolução
+
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  summarise(Peso_medio = mean(Peso_Kg, na.rm = T))
+```
+
+---
+class: inverse, center, middle
+
+# Função: group_by()
+
+---
+class: middle
+
+# Função: group_by()
+
+Por fim, temos a função *group_by()* que irá agrupar o banco de dados em relação a uma variável. Neste exemplo iremos usar em conjunto com outras funções.
+
+## Código
+
+```{r message=FALSE, warning=FALSE}
+starwars %>%
+  group_by(Especies) %>%
+  summarise(
+    n = n(), # fornece o tamanho atual do grupo
+    Peso_medio = mean(Peso_Kg, na.rm = TRUE)
+  ) %>%
+  filter(
+    n > 1,
+    Peso_medio > 50
+  )
+```
+
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: group_by()
+
+- Agrupe por **Especies** e faça a média da altura.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/3ov9k9lbqXdhH2zl5e/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: group_by() - Resolução
+
+```{r message=FALSE, warning=FALSE}
+starwars %>%
+  group_by(Especies) %>%
+  summarise(
+    n = n(),
+    Altura_media = mean(Altura_cm, na.rm = TRUE)
+  ) %>%
+  filter(
+    n > 1,
+    Altura_media > 80
+  )
+```
+
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Atividade
+
+- Queremos os personagens do **sexo feminino** com as **idade diferentes de NA**. Em seguida, uma representante de **cada Planeta Natal sem repetições**. As informações sobre elas serão o **Nome**, **Idade** e o **Planeta Natal**. Por fim, mude a variável **Idade** para **Anos_de_Vida**
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/kTGNxBzJb80Ni/giphy.gif")
+```
+
+---
+class: middle
+
+# Atividade - Resolução
+
+```{r message=FALSE, warning=FALSE}
+starwars %>%
+  filter(Sexo == "female",
+         !is.na(Idade)) %>% 
+  distinct(Nome, Planeta_Natal, Idade, Especies) %>% 
+  rename(Anos_de_vida = Idade)
+  
+```
+---
+class: inverse, center, middle
+
+# Parte II
+
+---
+class: middle
+
+# Bancos de Dados
+
+Para nossas atividades vamos usar 3 bancos de dados (filmes, clientes e sistema) que vamos simular uma locadora. Com ajuda dos joins vamos unir as bases para fazer manipulações de dados que queremos. Essas bases estão no **meu projeto** e vou usar a função **readxl::read_excel()** para importar
+
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/3og0IHAl4v3Dda8ueA/giphy.gif")
+```
+
+---
+class: middle
+
+### Código - Leitura dos dados::
+
+```{r message=FALSE, warning=FALSE}
+
+library(readxl) # Pacote necessário para importar os dados.
+
+filmes <- read_excel("Itacine.xlsx",
+                     sheet = 1) # Primeira aba da planilha
+
+clientes <- read_excel("Itacine.xlsx",
+                     sheet = 2) # Segunda aba da planilha
+
+sistema <- read_excel("Itacine.xlsx",
+                               sheet = 3) # Terceira aba da planilha
+```
+---
+class:middle
+
+# Base de dados - filmes
+
+A base de dados **filmes** contém as variavéis *Código* referente ao código do filme e *Filme* referente ao nome e ano do filme.
+
+```{r}
+filmes
+```
+
+---
+class:middle
+
+# Base de dados - clientes
+
+A base de dados **clientes** contém as variavéis *ID* referente ao ID do cliente e *Nome* referente ao nome do cliente.
+
+```{r}
+clientes
+```
+---
+class:middle
+
+# Base de dados - sistema
+
+A base de dados **sistema** contém as variavéis *ID* referente ao ID do cliente, *Codigo_Filme* referente ao código do filme e *Status* referente se o cliente devolveu ou não o filme.
+
+```{r}
+sistema
+```
+
+---
+class: inverse, center, middle
+
+# ..._join
+
+---
+class:middle
+
+# Função: ..._join
+
+Bom, chegamos em um novo nível! Agora vamos fundir base de dados utilizando a família do join. Hoje vamos aprender os seguintes:
+
+- inner_join(): Retorna todas as linhas de x onde existem valores correspondentes em y e todas as colunas de x e y.
+
+- right_join(): Returna todas as linhas de y, e todas as colunas tanto de x quanto de y.
+
+- left_join(): Returna todas as linhas de x, e todas as colunas tanto de x quanto de y
+
+- full_join(): Returna todas as linhas e todas as colunas tanto de x quanto de y. Returna NA no caso de não haver valor correspondente
+
+*Definição* [Join com dplyr](https://rpubs.com/CristianaFreitas/311735)
+
+---
+class: middle
+
+# Função: ..._join
+
+Vamos entender melhor:
+
+```{r message=FALSE, warning=FALSE, , out.width="85%", paged.print=FALSE, echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("joins.png")
+```
+---
+class: middle
+
+# Função: inner_join()
+
+Agora, que já conhecemos algumas funções da família join vamos aplicar o inner_join() para fundir a base clientes com sistema. Vejamos:
+
+## Código 
+```{r}
+base <- sistema %>% 
+  inner_join(filmes, by = c("Codigo_Filme" = "Código"))
+```
+---
+class: middle
+
+## Código
+
+```{r}
+base
+```
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Exercício: full_join()
+
+- Use a função full_join() para fundir a **base** com **clientes**.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/52KsqaIaKeQ0/giphy.gif")
+```
+
+---
+class: middle
+
+# Exercício: full_join() - Resolução
+
+- Use a função full_join() para fundir a **base** com **clientes**:
+
+# Código
+
+```{r message=FALSE, warning=FALSE}
+
+base <- base %>% 
+  full_join(clientes, by = "ID")
+
+base
+```
+---
+class: inverse, center, middle
+
+# Dúvidas
+
+---
+class: middle
+
+# Atividade
+
+O dono da locadora **Itacine** gostaria de ajuda para extrair algumas informações. Ele ligou para empresa e fez uma lista de coisas que ele gostaria de saber:
+
+- Os filmes que fazem maior sucesso na sua locadora;
+
+- Filmes que estão pegando poeira nas prateleiras;
+
+- Os clientes que são cinéfilos (alugaram mais de 10 filmes);
+
+- Quantos filmes estão sendo devolvidos?
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/JUh0yTz4h931K/giphy.gif")
+```
+
+---
+class: middle
+
+# Os filmes que fazem maior sucesso na sua locadora - Resolução:
+
+```{r message=FALSE, warning=FALSE}
+top_5 <- base %>% 
+  group_by(Filme) %>% 
+  summarise(numero_de_filmes = n()) %>% 
+  arrange(desc(numero_de_filmes)) %>% 
+  head(5)
+
+top_5 # Lista dos filmes mais alugados
+```
+---
+class: middle
+
+# Filmes que estão pegando poeira nas prateleiras - Resolução:
+
+```{r message=FALSE, warning=FALSE}
+encalhados <- base %>% 
+  group_by(Filme) %>% 
+  summarise(numero_de_filmes = n()) %>% 
+  arrange(numero_de_filmes) %>% 
+  head(5)
+
+encalhados # Lista dos filmes menos alugados
+```
+---
+class: middle
+
+# Os clientes que são cinéfilos ( alugaram mais de 10 filmes) - Resolução:
+
+```{r message=FALSE, warning=FALSE}
+cinefilos <- base %>% 
+  group_by(Nome) %>% 
+  summarise(Filmes_Alugados = n()) %>% 
+  filter(Filmes_Alugados > 10)
+
+cinefilos # Lista dos clientes cinefilos
+```
+---
+class: middle
+
+# Quantos filmes estão sendo devolvidos? - Resolução
+
+```{r message=FALSE, warning=FALSE}
+status <- base %>% 
+  group_by(Status) %>% 
+  summarise(Total = n())
+
+status 
+```
+
+---
+class: inverse, center, middle
+
+Opa, você ficou até aqui? Então, vou te mostrar coisas legais que podiramos fazer com essa base usando outro pacote!
+
+---
+class: middle
+
+# ggplot2
+
+Com o pacote ggplot2 podemos pegar os resultados que encoanatramos anteriormente e transformar em gráficos. Assim, torna muito mais atrativo para o nosso cliente. Então, vamos apresentar nossos resultados para o dono da Locadora em forma de gráficos!
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/8gNQZ9IpkcdiAjfOgN/giphy.gif")
+```
+
+---
+class: middle
+
+# Os filmes que fazem maior sucesso na sua locadora - Visalização
+
+```{r}
+library(ggplot2)
+
+sucesso <- ggplot(data = top_5) +
+  geom_bar((mapping = aes(x = Filme, y = numero_de_filmes)),
+            stat = "identity",
+           fill = "black") +
+  labs(title = "Locadora Itacine - Favoritos",
+       x = "Filmes",
+       y = "Número de filmes alugados")
+```
+---
+class: center
+
+# Os filmes que fazem maior sucesso na sua locadora
+
+```{r}
+sucesso # Visualização
+```
+---
+class: middle
+
+# Filmes que estão pegando poeira nas prateleiras - Visalização
+
+```{r}
+library(ggplot2)
+
+fracassos <- ggplot(data = encalhados) +
+  geom_bar((mapping = aes(x = Filme, y = numero_de_filmes)),
+           stat = "identity",
+           fill = "black") +
+  labs(title = "Locadora Itacine - Poucos Alugados",
+       x = "Filmes",
+       y = "Número de filmes alugados")
+
+```
+---
+class: center
+
+# Filmes que estão pegando poeira nas prateleiras
+
+```{r}
+fracassos # Visualização
+```
+---
+class: middle
+
+# Os clientes que são cinéfilos (alugaram mais de 10 filmes) - Visalização
+
+```{r}
+library(ggplot2)
+
+clientes_fies <- ggplot(data = cinefilos) +
+  geom_bar((mapping = aes(x = Nome, y = Filmes_Alugados)),
+           stat = "identity",
+           fill = "yellow") +
+  labs(title = "Locadora Itacine - Clientes Fies",
+       x = "Clientes",
+       y = "Número de filmes alugados") +
+  coord_flip()
+
+```
+---
+class: center
+
+# Os clientes que são cinéfilos (alugaram mais de 10 filmes)
+
+```{r}
+clientes_fies # Visualização
+```
+---
+class: middle
+
+# Quantos filmes estão sendo devolvidos? - Visalização
+
+```{r}
+library(ggplot2)
+
+devolvidos <- ggplot(base, aes(x= factor(1), fill= Status))+
+  geom_bar(width = 1)+
+  coord_polar("y")+ 
+  theme(plot.background = element_rect(fill = "#e2ded3", colour = "#e2ded3"))+
+  labs(title = "Locadora Itacine",
+       x = "",
+       y = "")
+```
+---
+class: center
+
+# Quantos filmes estão sendo devolvidos?
+
+```{r}
+devolvidos # Visualização
+```
+
+---
+class: middle
+
+# Encerramento
+
+- Fonte: 
+  
+*R para Data Science* -> Hadley Wickham & Garrett Gorlemund;
+
+*Karina Yaginuma* -> Universidade Federal Fluminense;
+
+*Jony Arrais* -> Universidade Federal Fluminense;
+
+*Estatística é com R* -> Canal do YouTube
+
+*William Surles* -> [Joining Data in R with dplyr](https://rpubs.com/williamsurles/293454)
+
+*Cristiana Freitas* -> [Join com dplyr](https://rpubs.com/CristianaFreitas/311735)
+---
+class: middle
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/fREdWLtU5vTgjudo3I/giphy.gif")
+```
+  
+
