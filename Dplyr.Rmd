@@ -13,7 +13,6 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-
 class: middle
 
 # R Ladies 
@@ -30,7 +29,6 @@ R-Ladies Niterói é uma organização mundial cuja missão é promover a divers
 
 
 ---
-
 class: middle
 
 ### Profissional:
@@ -56,7 +54,6 @@ knitr::include_graphics("julia.jpeg")
 ```
 
 ---
-
 class: middle
 
 ### Julia Hellen Skywalker:
@@ -112,7 +109,6 @@ O Dplyr foi desenvolvido pelo Hadley Wickham. O pacote veio para facilitar o uso
 # install.packages("dplyr")
 ```
 
-
 # Funções que vamos aprender:
 
 **Parte I**
@@ -123,11 +119,18 @@ O Dplyr foi desenvolvido pelo Hadley Wickham. O pacote veio para facilitar o uso
 
 - arrange(); summarise(); group_by();
 
+- sample_frac(); sample_n().
+
+---
+class: middle
+
 **Parte II**
 
 - inner_join(), left_join();
 
-- full_join(), right_join().
+- full_join(), right_join();
+
+- Mais exercícios e uma surpresa!
 
 ---
 class: inverse, center, middle
@@ -146,6 +149,7 @@ knitr::include_graphics("https://media.giphy.com/media/8hMD9YakVza3452SpN/giphy.
 ```
 
 ---
+class: middle
 
 ### Código:
 
@@ -257,12 +261,13 @@ class: middle
 
 # Exercício: rename()
 
-Renomeie as colunas: **Filmes** para **Episodios**.
+- Renomeie as colunas: **Filmes** para **Episodios**.
 
 ```{r echo=FALSE, fig.align = 'center'}
 knitr::include_graphics("https://media.giphy.com/media/J1nr4o7oolWz6/giphy.gif")
 ```
 ---
+class: middle
 
 # Exercício: rename() - Resolução
 
@@ -312,6 +317,7 @@ class: middle
 knitr::include_graphics("https://media.giphy.com/media/YfCuW2maPixri/giphy.gif")
 ```
 ---
+class: middle
 
 # Exercício: distinct() - Resolução
 
@@ -761,7 +767,96 @@ starwars %>%
 ---
 class: inverse, center, middle
 
+# Função: sample_...()
+
+---
+class: middle
+
+# Função: sample_...()
+
+O pacote Dplyr também possiblita selecionar os dados aleatoriamente. Isso se torna muito útil para situações de Amostra Aleatória Simples (AAS). São duas funções: sample_frac() que nos permite selecionar aleatóriamente uma porcentagem dos dados e a sample_n() que nos permite selecionar aleatoriamente o numero de observações do banco de dados.
+  
+### Código - Queremos uma amostra de 80% das observações do banco de dado sem reposição
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  sample_frac(0.8, replace = FALSE)   
+  
+```
+---
+class: middle
+
+### Código - Queremos uma amostra de 5 observações do banco de dados sem reposição
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  sample_n(5, replace = FALSE)   
+  
+```
+
+---
+class: inverse, center, middle
+
 # Dúvidas
+
+---
+class: middle
+
+# Exercício: sample_...()
+
+- Sorteie 15 osbservações do banco de dados com reposição e 30% das observações do banco de dados com reposição.
+
+```{r echo=FALSE, fig.align = 'center'}
+knitr::include_graphics("https://media.giphy.com/media/GNVmMgSdY5nxK/giphy.gif")
+```
+---
+class: middle
+
+# Exercício: sample_...() - Resolução
+
+- Sorteie 15 osbservações do banco de dados com reposição e 30% das observações do banco de dados com reposição:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  sample_n(15, replace = TRUE)
+```
+---
+class: middle
+
+# Exercício: sample_...() - Resolução
+
+- Sorteie 15 osbservações do banco de dados com reposição e 30% das observações do banco de dados com reposição:
+  
+### Código
+  
+```{r message=FALSE, warning=FALSE}
+starwars %>% 
+  sample_frac(0.30, replace = TRUE)
+```
+---
+class: middle
+
+# Ainda tem mais!
+
+As funções que vimos ainda podem ser usadas de outras formas com seus sufixos. Sufixos: _at(), _if(), _all(), etc.
+
+### Gramática:
+
+- select_at(); select_if(); select_all();
+
+- filter_at(); filter_if(); filter_all();
+
+- mutate_at(); mutate_if(); mutate_all();
+
+
+### Código:
+
+```{r}
+starwars %>% 
+  select_if(is.numeric)
+```
 
 ---
 class: middle
@@ -958,6 +1053,8 @@ O dono da locadora **Itacine** gostaria de ajuda para extrair algumas informaç�
 
 - Quantos filmes estão sendo devolvidos?
 
+- Ele deseja sortear 1 mês de filmes grátis para 3 clientes.
+
 ```{r echo=FALSE, fig.align = 'center'}
 knitr::include_graphics("https://media.giphy.com/media/JUh0yTz4h931K/giphy.gif")
 ```
@@ -1015,6 +1112,19 @@ status <- base %>%
 
 status 
 ```
+---
+class: middle
+
+# Sortear 3 clientes - Resolução:
+
+```{r}
+sorteio <- base %>% 
+  select(Nome) %>% 
+  sample_n(3, replace = FALSE)
+
+sorteio
+```
+
 
 ---
 class: inverse, center, middle
@@ -1150,6 +1260,8 @@ class: middle
 *William Surles* -> [Joining Data in R with dplyr](https://rpubs.com/williamsurles/293454)
 
 *Cristiana Freitas* -> [Join com dplyr](https://rpubs.com/CristianaFreitas/311735)
+
+*Kássio Ferreira*-> [Manipulação de Dados em R (dplyr,tidyr)](https://rpubs.com/Kassio_Ferreira/tutorialdplyr)
 ---
 class: middle
 
